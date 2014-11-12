@@ -14,11 +14,12 @@ import (
 var executable string = "ovftool"
 
 type Config struct {
-	common.PackerConfig `mapstructure:",squash"`
-	TargetPath          string `mapstructure:"target"`
-	TargetType          string `mapstructure:"format"`
-	Compression         uint   `mapstructure:"compression"`
-	tpl                 *packer.ConfigTemplate
+	common.PackerConfig       `mapstructure:",squash"`
+	TargetPath                string `mapstructure:"target"`
+	TargetType                string `mapstructure:"format"`
+	Compression               uint   `mapstructure:"compression"`
+	MaxVirtualHardwareVersion uint   `mapstructure:"hardware-version"`
+	tpl                       *packer.ConfigTemplate
 }
 
 type OVFPostProcessor struct {
@@ -142,6 +143,11 @@ func (p *OVFPostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (
 	// append --compression, if it is set
 	if p.cfg.Compression > 0 {
 		args = append(args, fmt.Sprintf("--compress=%d", p.cfg.Compression))
+	}
+
+	// append --maxVirtualHardwareVersion, if it is set
+	if p.cfg.MaxVirtualHardwareVersion > 0 {
+		args = append(args, fmt.Sprintf("--maxVirtualHardwareVersion=%d", p.cfg.MaxVirtualHardwareVersion))
 	}
 
 	// add the source/target
